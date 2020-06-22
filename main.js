@@ -636,7 +636,7 @@ function evaluateArticle(articleHead, parser) {
 
 const app = express__WEBPACK_IMPORTED_MODULE_0__();
 app.use(cors__WEBPACK_IMPORTED_MODULE_2__({
-    origin: ['http://localhost:4200'],
+    origin: ['http://localhost:4200', 'https://schopal.neocities.org'],
 }));
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["json"]());
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["urlencoded"]({ extended: true }));
