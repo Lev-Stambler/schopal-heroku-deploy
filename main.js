@@ -777,7 +777,7 @@ module.exports = __webpack_require__(32);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
 
-const port = process.env.port || 3333;
+const port = process.env.PORT || 3333;
 const server = _app_app__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"].listen(port, () => {
     console.info(`Listening at http://localhost:${port}/api`);
 });
