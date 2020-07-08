@@ -177,7 +177,7 @@ module.exports = require("body-parser");
 
 function findQueryResults(query, opts) {
     return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-        // The query is the impact and the recommendation is left blank
+        // The query is passed in twice in order to not interfere with the cross feature
         const articleHeads = yield Object(_foodmedicine_scholars_scraper__WEBPACK_IMPORTED_MODULE_2__[/* runScholarsScraper */ "a"])(query, 
         // TODO this is a temporary fix, removing the entire recommendation, impact abstraction should be done
         query, (opts === null || opts === void 0 ? void 0 : opts.numberOfArticles) || 25);
@@ -187,6 +187,8 @@ function findQueryResults(query, opts) {
         }));
         const allEvaluatedArticles = yield Promise.all(downloadProms);
         const allParagraphsStandalone = [];
+        // For each evaluated article paragraph, form the ParsedArticleParagraphStandalone and push
+        // it to the array of all parsed article paragraphs
         allEvaluatedArticles.forEach((article) => {
             const standaloneParagraphs = article.paragraphs.map((paragraph) => {
                 return Object.assign({ head: article.head, 
@@ -197,9 +199,7 @@ function findQueryResults(query, opts) {
         });
         // Sort in descending order and remove empty items
         allParagraphsStandalone.sort((a, b) => b.correlationScore - a.correlationScore);
-        const allParagraphsStandaloneFiltered = allParagraphsStandalone.filter((paragraph) => paragraph.body &&
-            paragraph.body !== '' &&
-            paragraph.body.trim().length > 0);
+        const allParagraphsStandaloneFiltered = allParagraphsStandalone.filter((paragraph) => { var _a; return ((_a = paragraph.body) === null || _a === void 0 ? void 0 : _a.trim().length) > 0; });
         return allParagraphsStandaloneFiltered.slice(0, (opts === null || opts === void 0 ? void 0 : opts.maxNumberOfParagraphs) || allParagraphsStandalone.length);
     });
 }
@@ -638,7 +638,11 @@ function evaluateArticle(articleHead, parser) {
 
 const app = express__WEBPACK_IMPORTED_MODULE_0__();
 app.use(cors__WEBPACK_IMPORTED_MODULE_2__({
-    origin: ['http://localhost:4200', 'https://schopal.neocities.org'],
+    origin: [
+        'http://localhost:4200',
+        'https://schopal.netlify.app',
+        'https://schopal.neocities.org',
+    ],
 }));
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["json"]());
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["urlencoded"]({ extended: true }));
