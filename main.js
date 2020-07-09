@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 32);
+/******/ 	return __webpack_require__(__webpack_require__.s = 30);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -92,37 +92,32 @@ module.exports = require("tslib");
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("express");
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = require("natural");
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return correlationWeights; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return cutOffs; });
 const correlationWeights = {
-    // impact cross recommendation is high to place an emphasis on
-    // having both impact and recommendation within one paragraph
-    impactCrossRecommendation: 8,
-    impactSynonymWordFreq: 0.5,
-    impactWordFreq: 1,
-    recommendationWordFreq: 1,
-    recommendationSynonymWordFreq: 0.5,
+    querySynonymWordFreq: 0.5,
+    queryWordFreq: 1,
 };
 const cutOffs = {
     minimumWordDistance: 0.85,
     maintainScoreWithinPercent: 10,
 };
 
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("express");
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("natural");
 
 /***/ }),
 /* 4 */
@@ -132,27 +127,16 @@ module.exports = require("node-fetch");
 
 /***/ }),
 /* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _lib_word_explorer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _lib_word_explorer__WEBPACK_IMPORTED_MODULE_0__["a"]; });
-
-
-
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = require("body-parser");
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _lib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(15);
+/* harmony import */ var _lib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _lib__WEBPACK_IMPORTED_MODULE_0__["a"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "b", function() { return _lib__WEBPACK_IMPORTED_MODULE_0__["b"]; });
@@ -161,28 +145,24 @@ module.exports = require("body-parser");
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return findQueryResults; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tslib__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _foodmedicine_interfaces__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(24);
-/* harmony import */ var _foodmedicine_scholars_scraper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(25);
-/* harmony import */ var _foodmedicine_article_parser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7);
-
+/* harmony import */ var _foodmedicine_scholars_scraper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
+/* harmony import */ var _foodmedicine_article_parser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
 
 
 
 function findQueryResults(query, opts) {
     return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
         // The query is passed in twice in order to not interfere with the cross feature
-        const articleHeads = yield Object(_foodmedicine_scholars_scraper__WEBPACK_IMPORTED_MODULE_2__[/* runScholarsScraper */ "a"])(query, 
-        // TODO this is a temporary fix, removing the entire recommendation, impact abstraction should be done
-        query, (opts === null || opts === void 0 ? void 0 : opts.numberOfArticles) || 25);
+        const articleHeads = yield Object(_foodmedicine_scholars_scraper__WEBPACK_IMPORTED_MODULE_1__[/* runScholarsScraper */ "a"])(query, (opts === null || opts === void 0 ? void 0 : opts.numberOfArticles) || 25);
         const downloadProms = articleHeads.map((articleHead) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            const evaluatedArticle = yield _foodmedicine_article_parser__WEBPACK_IMPORTED_MODULE_3__[/* evaluateArticle */ "b"](articleHead, _foodmedicine_article_parser__WEBPACK_IMPORTED_MODULE_3__[/* EbiParser */ "a"]);
+            const evaluatedArticle = yield _foodmedicine_article_parser__WEBPACK_IMPORTED_MODULE_2__[/* evaluateArticle */ "b"](articleHead, _foodmedicine_article_parser__WEBPACK_IMPORTED_MODULE_2__[/* EbiParser */ "a"]);
             return evaluatedArticle;
         }));
         const allEvaluatedArticles = yield Promise.all(downloadProms);
@@ -191,9 +171,7 @@ function findQueryResults(query, opts) {
         // it to the array of all parsed article paragraphs
         allEvaluatedArticles.forEach((article) => {
             const standaloneParagraphs = article.paragraphs.map((paragraph) => {
-                return Object.assign({ head: article.head, 
-                    // set default backsUpClaim to notApplicable. This later gets changed manually in the JSON file
-                    backsUpClaim: _foodmedicine_interfaces__WEBPACK_IMPORTED_MODULE_1__[/* ArticleParagraphBacksUpClaim */ "a"].notApplicable }, paragraph);
+                return Object.assign({ head: article.head }, paragraph);
             });
             allParagraphsStandalone.push(...standaloneParagraphs);
         });
@@ -206,41 +184,27 @@ function findQueryResults(query, opts) {
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ArticleParagraphBacksUpClaim; });
-var ArticleParagraphBacksUpClaim;
-(function (ArticleParagraphBacksUpClaim) {
-    ArticleParagraphBacksUpClaim["yes"] = "y";
-    ArticleParagraphBacksUpClaim["no"] = "n";
-    ArticleParagraphBacksUpClaim["notApplicable"] = "na";
-})(ArticleParagraphBacksUpClaim || (ArticleParagraphBacksUpClaim = {}));
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _scraper_scholars_scraper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+/* harmony import */ var _scraper_scholars_scraper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _scraper_scholars_scraper__WEBPACK_IMPORTED_MODULE_0__["a"]; });
 
 
 
 
 /***/ }),
-/* 11 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return runScholarsScraper; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tslib__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _foodmedicine_scraper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(26);
-/* harmony import */ var _parsers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(27);
-/* harmony import */ var _foodmedicine_word_explorer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
+/* harmony import */ var _foodmedicine_scraper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
+/* harmony import */ var _parsers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(24);
+/* harmony import */ var _foodmedicine_word_explorer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 
@@ -250,24 +214,22 @@ var ArticleParagraphBacksUpClaim;
  * Construct the google scholars url which will be scraped
  * @param pageSize - the number of articles to get
  */
-function createScholarsUrl(impacted, solution, pageSize, synonym = true) {
-    return encodeURI(`https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=${solution} ${impacted}&synonym=${synonym}&pageSize=${pageSize}`);
+function createEuropePMCUrl(query, pageSize, synonym = true) {
+    return encodeURI(`https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=${query}&synonym=${synonym}&pageSize=${pageSize}`);
 }
 /**
  * Find all the PDF urls which could have related articles to the remedy
- * @param remedy - one particular impacted and a set of recommendations
  * @returns an array of PDF urls
  */
-function runScholarsScraper(impacted, recommendation, pageSize = 25) {
+function runScholarsScraper(query, pageSize = 25) {
     return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-        const queryUrl = createScholarsUrl(impacted, recommendation, pageSize);
-        const impactedSynonyms = yield Object(_foodmedicine_word_explorer__WEBPACK_IMPORTED_MODULE_3__[/* getSynonyms */ "a"])(impacted);
-        const remedyScraper = new _foodmedicine_scraper__WEBPACK_IMPORTED_MODULE_1__[/* Scraper */ "a"](_parsers__WEBPACK_IMPORTED_MODULE_2__[/* ScholarsParser */ "a"], {
+        const queryUrl = createEuropePMCUrl(query, pageSize);
+        const querySynonyms = yield Object(_foodmedicine_word_explorer__WEBPACK_IMPORTED_MODULE_3__[/* getSynonyms */ "a"])(query);
+        const remedyScraper = new _foodmedicine_scraper__WEBPACK_IMPORTED_MODULE_1__[/* Scraper */ "a"](_parsers__WEBPACK_IMPORTED_MODULE_2__[/* EuropePMCParser */ "a"], {
             url: queryUrl,
             tag: {
-                recommendation: recommendation,
-                impacted: impacted,
-                impactedSynonyms,
+                query,
+                querySynonyms,
             },
         });
         const articleHeads = yield remedyScraper.run();
@@ -277,7 +239,7 @@ function runScholarsScraper(impacted, recommendation, pageSize = 25) {
 
 
 /***/ }),
-/* 12 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -335,23 +297,21 @@ class Scraper {
 
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ScholarsParser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EuropePMCParser; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tslib__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var xml2js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(28);
+/* harmony import */ var xml2js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(25);
 /* harmony import */ var xml2js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(xml2js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _foodmedicine_word_explorer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-
 
 
 /**
  * A parser for https://www.ebi.ac.uk/europepmc/webservices/rest/
  */
-const ScholarsParser = {
+const EuropePMCParser = {
     parserF: (xml, opts) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(void 0, void 0, void 0, function* () {
         if (!opts) {
             throw 'Options must be passed into this scraper';
@@ -359,16 +319,13 @@ const ScholarsParser = {
         const parser = new xml2js__WEBPACK_IMPORTED_MODULE_1__["Parser"]();
         const jsonRes = yield parser.parseStringPromise(xml);
         const allResults = jsonRes.responseWrapper.resultList[0].result;
-        const recommendationSynonyms = yield _foodmedicine_word_explorer__WEBPACK_IMPORTED_MODULE_2__[/* getSynonyms */ "a"](opts.tag.recommendation);
         const parsedHeads = allResults.map((res) => {
             return {
                 id: res.id[0],
                 title: res.title[0],
                 xmlFullTextDownloadLink: `https://www.ebi.ac.uk/europepmc/webservices/rest/${res.id[0]}/fullTextXML`,
-                recommendation: opts.tag.recommendation,
-                impacted: opts.tag.impacted,
-                impactedSynonyms: opts.tag.impactedSynonyms,
-                recommendationSynonyms: recommendationSynonyms,
+                query: opts.tag.query,
+                querySynonyms: opts.tag.querySynonyms,
             };
         });
         return parsedHeads;
@@ -377,18 +334,18 @@ const ScholarsParser = {
 
 
 /***/ }),
-/* 14 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return getSynonyms; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tslib__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27);
 /* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(util__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var wordnet__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(30);
+/* harmony import */ var wordnet__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(28);
 /* harmony import */ var wordnet__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(wordnet__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var natural__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
+/* harmony import */ var natural__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2);
 /* harmony import */ var natural__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(natural__WEBPACK_IMPORTED_MODULE_3__);
 
 
@@ -423,14 +380,14 @@ function getSynonyms(word) {
 
 
 /***/ }),
-/* 15 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _parser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
+/* harmony import */ var _parser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _parser__WEBPACK_IMPORTED_MODULE_0__["a"]; });
 
-/* harmony import */ var _correlation_score_correlation_score__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(18);
+/* harmony import */ var _correlation_score_correlation_score__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "b", function() { return _correlation_score_correlation_score__WEBPACK_IMPORTED_MODULE_1__["a"]; });
 
 
@@ -438,25 +395,25 @@ function getSynonyms(word) {
 
 
 /***/ }),
-/* 16 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _ebi_parser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
+/* harmony import */ var _ebi_parser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(15);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _ebi_parser__WEBPACK_IMPORTED_MODULE_0__["a"]; });
 
 
 
 
 /***/ }),
-/* 17 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EbiParser; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tslib__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var cheerio__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
+/* harmony import */ var cheerio__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
 /* harmony import */ var cheerio__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(cheerio__WEBPACK_IMPORTED_MODULE_1__);
 
 
@@ -472,7 +429,7 @@ const EbiParser = {
         const paragraphTexts = $('p')
             .map((i, el) => $(el).text())
             .get();
-        const paragraphs = paragraphTexts.map((paragraphText) => opts.getCorrelationScore(paragraphText, opts.parsedArticleHead.impacted, opts.parsedArticleHead.recommendation, opts.parsedArticleHead.impactedSynonyms, opts.parsedArticleHead.recommendationSynonyms));
+        const paragraphs = paragraphTexts.map((paragraphText) => opts.getCorrelationScore(paragraphText, opts.parsedArticleHead.query, opts.parsedArticleHead.querySynonyms));
         const article = {
             head: opts.parsedArticleHead,
             paragraphs,
@@ -483,7 +440,7 @@ const EbiParser = {
 
 
 /***/ }),
-/* 18 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -492,8 +449,8 @@ const EbiParser = {
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tslib__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(node_fetch__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _correlation_constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1);
-/* harmony import */ var natural__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
+/* harmony import */ var _correlation_constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
+/* harmony import */ var natural__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2);
 /* harmony import */ var natural__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(natural__WEBPACK_IMPORTED_MODULE_3__);
 
 
@@ -525,35 +482,21 @@ function findWordsFreqFuzzy(words, paragraph) {
 }
 /**
  * Compute the correlation score based off of the inputs
- * Current features include impact frequencies, recommendation frequencies, impact x recommendation
- * Paragraph length
+ * Current features include query frequencies, query synonym frequencies
  */
-function computeScore(impactFreq, recommendationFreq, impactSynonymFreq, recommendationSynonymFreq, paragraphWordCount) {
-    const impactScore = impactFreq * _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* correlationWeights */ "a"].impactWordFreq;
-    const recommendationScore = recommendationFreq * _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* correlationWeights */ "a"].recommendationWordFreq;
-    const impactSynonymScore = impactSynonymFreq * _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* correlationWeights */ "a"].impactSynonymWordFreq;
-    const recommendationSynonymScore = recommendationSynonymFreq *
-        _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* correlationWeights */ "a"].recommendationSynonymWordFreq;
-    const crossScore = impactFreq *
-        recommendationFreq *
-        _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* correlationWeights */ "a"].impactCrossRecommendation;
-    // ensures that both impact and recommendation are seen in the same paragraph
-    return (impactScore +
-        recommendationScore +
-        crossScore +
-        impactSynonymScore +
-        recommendationSynonymScore);
+function computeScore(queryFreq, querySynonymWordFreq) {
+    const queryScore = queryFreq * _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* correlationWeights */ "a"].queryWordFreq;
+    const querySynonymScore = querySynonymWordFreq * _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* correlationWeights */ "a"].querySynonymWordFreq;
+    return (querySynonymScore + queryScore);
 }
 function stemString(input) {
     return natural__WEBPACK_IMPORTED_MODULE_3__["PorterStemmer"].tokenizeAndStem(input).join(' ');
 }
-function getWholeParagraphCorrelationScore(paragraph, impacted, recommendation, impactedSynonyms, recommendationSynonyms) {
-    const impactedStem = stemString(impacted);
+function getWholeParagraphCorrelationScore(paragraph, query, querySynonyms) {
+    const queryStem = stemString(query);
     const paragraphStemmed = stemString(paragraph);
-    const recommendationStem = stemString(recommendation);
-    const impactSynonymFreq = findWordsFreqFuzzy(impactedSynonyms, paragraphStemmed);
-    const recommendationSynonymFreq = findWordsFreqFuzzy(recommendationSynonyms, paragraphStemmed);
-    const correlationScore = computeScore(findWordFreqFuzzy(impactedStem, paragraphStemmed), findWordFreqFuzzy(recommendationStem, paragraphStemmed), impactSynonymFreq, recommendationSynonymFreq, paragraph.split(' ').length);
+    const querySynonymFreq = findWordsFreqFuzzy(querySynonyms, paragraphStemmed);
+    const correlationScore = computeScore(findWordFreqFuzzy(queryStem, paragraphStemmed), querySynonymFreq);
     return {
         body: paragraph,
         correlationScore,
@@ -564,7 +507,7 @@ function getWholeParagraphCorrelationScore(paragraph, impacted, recommendation, 
  * Will shorten the paragraph as much as possible while trying to mantain the same correlation score
  * + or - {@code maintainWithinPercent}
  */
-function getShortestParagraphCorrelationScore(paragraph, impacted, recommendation, impactedSynonyms, recommendationSynonyms, maintainWithinPercent = _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* cutOffs */ "b"].maintainScoreWithinPercent) {
+function getShortestParagraphCorrelationScore(paragraph, query, querySynonyms, maintainWithinPercent = _correlation_constants__WEBPACK_IMPORTED_MODULE_2__[/* cutOffs */ "b"].maintainScoreWithinPercent) {
     function calculatePercentageDifference(x, y) {
         return Math.abs((x - y) / x) * 100;
     }
@@ -573,7 +516,7 @@ function getShortestParagraphCorrelationScore(paragraph, impacted, recommendatio
     if (!sentences[sentences.length - 1]) {
         sentences.pop();
     }
-    const initScore = getWholeParagraphCorrelationScore(paragraph, impacted, recommendation, impactedSynonyms, recommendationSynonyms).correlationScore;
+    const initScore = getWholeParagraphCorrelationScore(paragraph, query, querySynonyms).correlationScore;
     let currentScore = initScore;
     let leftInd = 0;
     let rightIndNonInclusive = sentences.length;
@@ -582,7 +525,7 @@ function getShortestParagraphCorrelationScore(paragraph, impacted, recommendatio
     while (calculatePercentageDifference(initScore, currentScore) <=
         maintainWithinPercent / 2 &&
         leftInd != rightIndNonInclusive) {
-        currentScore = getWholeParagraphCorrelationScore(sentences.slice(leftInd, rightIndNonInclusive).join('.'), impacted, recommendation, impactedSynonyms, recommendationSynonyms).correlationScore;
+        currentScore = getWholeParagraphCorrelationScore(sentences.slice(leftInd, rightIndNonInclusive).join('.'), query, querySynonyms).correlationScore;
         leftInd++;
     }
     // Attempts to remove sentences from the end of the paragraph
@@ -590,7 +533,7 @@ function getShortestParagraphCorrelationScore(paragraph, impacted, recommendatio
     while (calculatePercentageDifference(initScore, currentScore) <=
         maintainWithinPercent &&
         leftInd != rightIndNonInclusive) {
-        currentScore = getWholeParagraphCorrelationScore(sentences.slice(leftInd, rightIndNonInclusive).join('.'), impacted, recommendation, impactedSynonyms, recommendationSynonyms).correlationScore;
+        currentScore = getWholeParagraphCorrelationScore(sentences.slice(leftInd, rightIndNonInclusive).join('.'), query, querySynonyms).correlationScore;
         rightIndNonInclusive--;
     }
     // Increment {@code rightIndNonInclusive} because the new correlation score may be
@@ -608,12 +551,10 @@ function getShortestParagraphCorrelationScore(paragraph, impacted, recommendatio
 function evaluateArticle(articleHead, parser) {
     return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
         const inputXML = yield downloadArticle(articleHead.xmlFullTextDownloadLink);
-        console.info(`Downloaded XML for ${articleHead.impacted} for ${articleHead.recommendation} with url ${articleHead.xmlFullTextDownloadLink}`);
+        console.info(`Downloaded XML for ${articleHead.query} with url ${articleHead.xmlFullTextDownloadLink}`);
         // Parser functions return an array, but in this case, only the first result is relevant
         return (yield parser.parserF(inputXML, {
             parsedArticleHead: articleHead,
-            impacted: articleHead.impacted,
-            recommendation: articleHead.recommendation,
             getCorrelationScore: getShortestParagraphCorrelationScore,
         }));
     });
@@ -621,17 +562,17 @@ function evaluateArticle(articleHead, parser) {
 
 
 /***/ }),
-/* 19 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(express__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var body_parser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
+/* harmony import */ var body_parser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var body_parser__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(body_parser__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var cors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(20);
+/* harmony import */ var cors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
 /* harmony import */ var cors__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(cors__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _controllers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(21);
+/* harmony import */ var _controllers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(19);
 
 
 
@@ -651,19 +592,19 @@ app.use('/api', _controllers__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"]);
 
 
 /***/ }),
-/* 20 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("cors");
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var express__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(express__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
+/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
 
 
 const router = express__WEBPACK_IMPORTED_MODULE_0__["Router"]();
@@ -672,15 +613,15 @@ router.use('/search', _search__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"]);
 
 
 /***/ }),
-/* 22 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tslib__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/* harmony import */ var express__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
 /* harmony import */ var express__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(express__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _daos__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(23);
+/* harmony import */ var _daos__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
 
 
 
@@ -703,12 +644,34 @@ router.get('/', (req, res, next) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["_
 
 
 /***/ }),
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _search__WEBPACK_IMPORTED_MODULE_0__["a"]; });
+
+
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _lib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _lib__WEBPACK_IMPORTED_MODULE_0__["a"]; });
+
+
+
+
+/***/ }),
 /* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _search__WEBPACK_IMPORTED_MODULE_0__["a"]; });
+/* harmony import */ var _lib_scraper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _lib_scraper__WEBPACK_IMPORTED_MODULE_0__["a"]; });
 
 
 
@@ -718,83 +681,61 @@ router.get('/', (req, res, next) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["_
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _lib_interfaces__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _lib_interfaces__WEBPACK_IMPORTED_MODULE_0__["a"]; });
+/* harmony import */ var _europepmc_parser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _europepmc_parser__WEBPACK_IMPORTED_MODULE_0__["a"]; });
 
 
 
 
 /***/ }),
 /* 25 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-/* harmony import */ var _lib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _lib__WEBPACK_IMPORTED_MODULE_0__["a"]; });
-
-
-
+module.exports = require("xml2js");
 
 /***/ }),
 /* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _lib_scraper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _lib_scraper__WEBPACK_IMPORTED_MODULE_0__["a"]; });
+/* harmony import */ var _lib_word_explorer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _lib_word_explorer__WEBPACK_IMPORTED_MODULE_0__["a"]; });
 
 
 
 
 /***/ }),
 /* 27 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _scholars_parser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _scholars_parser__WEBPACK_IMPORTED_MODULE_0__["a"]; });
-
-
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports) {
-
-module.exports = require("xml2js");
-
-/***/ }),
-/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = require("util");
 
 /***/ }),
-/* 30 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = require("wordnet");
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = require("cheerio");
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(33);
+module.exports = __webpack_require__(31);
 
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _app_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
+/* harmony import */ var _app_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
 
 const port = process.env.PORT || 3333;
 const server = _app_app__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"].listen(port, () => {
