@@ -829,6 +829,12 @@ function evaluateArticle(articleHead, db) {
 
 
 const app = express__WEBPACK_IMPORTED_MODULE_0__();
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+console.log("AAAAAAAAAAAAAAAAAAAAA");
 app.use(cors__WEBPACK_IMPORTED_MODULE_2__());
 // app.use(
 //   cors({
