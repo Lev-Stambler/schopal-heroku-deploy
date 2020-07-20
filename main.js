@@ -453,7 +453,7 @@ const ArxivParser = {
         }
         const parser = new xml2js__WEBPACK_IMPORTED_MODULE_1__["Parser"]();
         const jsonRes = yield parser.parseStringPromise(xml);
-        const allResults = jsonRes.feed.entry;
+        const allResults = jsonRes.feed.entry || [];
         const parsedHeads = allResults
             .map((res) => {
             const pdfDownloadLinks = res.link
@@ -732,9 +732,9 @@ function stemString(input) {
 }
 function getWholeParagraphCorrelationScore(paragraph, query, querySynonyms) {
     const queryStem = stemString(query);
-    const paragraphStemmed = stemString(paragraph);
-    const querySynonymFreq = findWordsFreqFuzzy(querySynonyms, paragraphStemmed);
-    const correlationScore = computeScore(findWordFreqFuzzy(queryStem, paragraphStemmed), querySynonymFreq);
+    const paragraphStem = stemString(paragraph);
+    const querySynonymFreq = findWordsFreqFuzzy(querySynonyms, paragraphStem);
+    const correlationScore = computeScore(findWordFreqFuzzy(queryStem, paragraphStem), querySynonymFreq);
     return {
         body: paragraph,
         correlationScore,
@@ -829,6 +829,10 @@ function evaluateArticle(articleHead, db) {
 
 
 const app = express__WEBPACK_IMPORTED_MODULE_0__();
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 app.use(cors__WEBPACK_IMPORTED_MODULE_2__({
     origin: [
         'http://localhost:4200',
