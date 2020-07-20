@@ -829,37 +829,16 @@ function evaluateArticle(articleHead, db) {
 
 
 const app = express__WEBPACK_IMPORTED_MODULE_0__();
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-console.log("AAAAAAAAAAAAAAAAAAAAA");
-app.use(cors__WEBPACK_IMPORTED_MODULE_2__());
-// app.use(
-//   cors({
-//     origin: [
-//       'http://localhost:4200',
-//       'https://schopal.netlify.app',
-//       'https://schopal.neocities.org',
-//     ],
-//   })
-// );
+app.use(cors__WEBPACK_IMPORTED_MODULE_2__({
+    origin: [
+        'http://localhost:4200',
+        'https://schopal.netlify.app',
+        'https://schopal.neocities.org',
+    ],
+}));
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["json"]());
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["urlencoded"]({ extended: true }));
 app.use('/api', _controllers__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"]);
-// app.use((req, res, next) => {
-//   // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   // res.header('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader(
-//     'Access-Control-Allow-Methods',  'GET, POST, PATCH, PUT, DELETE, OPTIONS'
-//   );
-//   res.setHeader(
-//     'Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token'
-//   );
-//   next();
-// });
 /* harmony default export */ __webpack_exports__["a"] = (app);
 
 
