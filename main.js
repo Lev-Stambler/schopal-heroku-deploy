@@ -884,15 +884,7 @@ function evaluateArticle(articleHead) {
 
 
 const app = express__WEBPACK_IMPORTED_MODULE_0__();
-app.use(cors__WEBPACK_IMPORTED_MODULE_2__({
-    origin: [
-        'http://localhost:4200',
-        '*',
-        'https://*.netlify.app',
-        'https://schopal.netlify.app',
-        'https://schopal.neocities.org',
-    ],
-}));
+app.use(cors__WEBPACK_IMPORTED_MODULE_2__());
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["json"]());
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["urlencoded"]({ extended: true }));
 app.use('/api', _controllers__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"]);
