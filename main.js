@@ -826,14 +826,6 @@ function evaluateArticle(articleHead, db) {
 
 
 const app = express__WEBPACK_IMPORTED_MODULE_0__();
-app.use((req, res, next) => {
-    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    // res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Origin: *');
-    res.header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
-    next();
-});
 // app.use(
 //   cors({
 //     origin: [
@@ -846,6 +838,14 @@ app.use((req, res, next) => {
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["json"]());
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["urlencoded"]({ extended: true }));
 app.use('/api', _controllers__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"]);
+app.use((req, res, next) => {
+    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    // res.header('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token');
+    next();
+});
 /* harmony default export */ __webpack_exports__["a"] = (app);
 
 
