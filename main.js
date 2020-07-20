@@ -887,6 +887,7 @@ const app = express__WEBPACK_IMPORTED_MODULE_0__();
 app.use(cors__WEBPACK_IMPORTED_MODULE_2__({
     origin: [
         'http://localhost:4200',
+        '*',
         'https://*.netlify.app',
         'https://schopal.netlify.app',
         'https://schopal.neocities.org',
