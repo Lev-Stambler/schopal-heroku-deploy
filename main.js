@@ -830,14 +830,13 @@ function evaluateArticle(articleHead, db) {
 
 const app = express__WEBPACK_IMPORTED_MODULE_0__();
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Headers', '*');
     next();
 });
 app.use(cors__WEBPACK_IMPORTED_MODULE_2__({
     origin: [
-        'http://localhost:4200',
-        'https://schopal.netlify.app',
-        'https://schopal.neocities.org',
+        '*',
     ],
 }));
 app.use(body_parser__WEBPACK_IMPORTED_MODULE_1__["json"]());
