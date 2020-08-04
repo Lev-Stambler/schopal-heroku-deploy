@@ -306,6 +306,38 @@ function runArxivScrapers(query, querySynonyms, pageSize) {
 
 
 
+function groupParagraphsByArticle(articlesStandalone) {
+    const byIds = {};
+    articlesStandalone.map((articleStandalone) => {
+        if (!byIds[articleStandalone.head.id]) {
+            byIds[articleStandalone.head.id] = [];
+        }
+        byIds[articleStandalone.head.id].push(articleStandalone);
+    });
+    const parsedByTitle = Object.keys(byIds)
+        .map((id) => {
+        var _a;
+        if (!byIds[id] || ((_a = byIds[id]) === null || _a === void 0 ? void 0 : _a.length) === 0) {
+            return null;
+        }
+        return {
+            head: byIds[id][0].head,
+            paragraphs: byIds[id].map((paragraphStandalone) => {
+                return {
+                    body: paragraphStandalone.body,
+                    correlationScore: paragraphStandalone.correlationScore,
+                };
+            }),
+        };
+    })
+        .filter((item) => item !== null);
+    return parsedByTitle;
+}
+function sortParagraphsByArticle(a, b) {
+    const aTotalScore = a.paragraphs.reduce((prev, paragraph) => (prev += paragraph.correlationScore), 0);
+    const bTotalScore = b.paragraphs.reduce((prev, paragraph) => (prev += paragraph.correlationScore), 0);
+    return bTotalScore - aTotalScore;
+}
 function findQueryResults(query, opts) {
     return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
         const cleanedQuery = Object(_foodmedicine_word_explorer__WEBPACK_IMPORTED_MODULE_4__[/* cleanString */ "a"])(query);
@@ -324,10 +356,12 @@ function findQueryResults(query, opts) {
             });
             allParagraphsStandalone.push(...standaloneParagraphs);
         });
-        // Sort in descending order and remove empty items
-        allParagraphsStandalone.sort((a, b) => b.correlationScore - a.correlationScore);
         const allParagraphsStandaloneFiltered = allParagraphsStandalone.filter((paragraph) => { var _a; return ((_a = paragraph.body) === null || _a === void 0 ? void 0 : _a.trim().length) > 0; });
-        return allParagraphsStandaloneFiltered.slice(0, (opts === null || opts === void 0 ? void 0 : opts.maxNumberOfParagraphs) || allParagraphsStandalone.length);
+        const filteredByLength = allParagraphsStandaloneFiltered.slice(0, (opts === null || opts === void 0 ? void 0 : opts.maxNumberOfParagraphs) || allParagraphsStandalone.length);
+        const byArticle = groupParagraphsByArticle(filteredByLength);
+        // sort the individual paragraphs within an article by correlation score
+        byArticle.map((article) => article.paragraphs.sort((a, b) => b.correlationScore - a.correlationScore));
+        return byArticle.sort((a, b) => sortParagraphsByArticle(a, b));
     });
 }
 
